@@ -19,9 +19,11 @@ public class PolygonOutlineRasterizer implements PolygonRasterizer {
     @Override
     public void rasterize (Polygon polygon) {
         List<Point> points = polygon.getPoints();
+        if (points.size() >= 2) {
+            rasterizeLine(points);
+        }
 
         if (points.size() > 2 && (polygon.isFinished())) {
-            rasterizeLine(points);
             Point first = points.getFirst();
             Point last = points.getLast();
             lineRasterizer.rasterize(new Line(color, last, first));

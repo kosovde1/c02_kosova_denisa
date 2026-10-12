@@ -116,6 +116,11 @@ public class Controller {
         polygonRasterizer.rasterize(polygon);
         if (previewLine != null){
             rasterizer.rasterize(previewLine);
+            if (!points.isEmpty()){
+                Point firstPoint = points.getFirst();
+                currentPoint = previewLine.getPoint2();
+                rasterizer.rasterize(new Line(PREVIEW_COLOR, firstPoint, currentPoint));
+            }
         }
         canvas.repaint();
 
