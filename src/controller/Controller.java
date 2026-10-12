@@ -31,7 +31,6 @@ public class Controller {
     private final LineRasterizer rasterizer;
     private final PolygonRasterizer polygonRasterizer;
 
-    private final List<Line> lines = new ArrayList<Line>();
     private final List<Point> points = new ArrayList<Point>();
     private static final int LINE_COLOR = Color.WHITE.getRGB();
     private static final int PREVIEW_COLOR = Color.RED.getRGB();
@@ -51,7 +50,7 @@ public class Controller {
     public void init() {
         canvas.clear();
         polygonRasterizer.rasterize(polygon);
-        // Obsluha vstupu z myši
+        // Handle mouse press and release events.
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -60,10 +59,10 @@ public class Controller {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (previewLine == null){
+                if (previewLine == null) {
                     return;
                 }
-                if (polygon.isFinished()){
+                if (polygon.isFinished()) {
                     previewLine = null;
                     render();
                 } else {
@@ -76,7 +75,7 @@ public class Controller {
             }
         });
 
-        // Obsluha vstupu z klávesnice
+        // Update the line preview while dragging the mouse.
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -84,39 +83,44 @@ public class Controller {
                     return;
                 }
                 currentPoint = getPoint(e);
-                if (previewLine == null){
+                if (previewLine == null) {
                     return;
                 }
-                else {
-                    previewLine = new Line(PREVIEW_COLOR, startPoint, currentPoint);
-                }
+                previewLine = new Line(PREVIEW_COLOR, startPoint, currentPoint);
                 render();
             }
         });
 
-        // Obsluha vstupu z klávesnice
+        // Handle keyboard input for finishing and clearing the polygon.
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    finishPolygon(e);
+                    finishPolygon();
                 }
                 if (e.getKeyCode() == KeyEvent.VK_C) {
                     points.clear();
                     previewLine = null;
                     polygon.setFinished(false);
+                    startPoint = null;
+                    currentPoint = null;
                     render();
                 }
             }
         });
         canvas.repaint();
     }
+
+    /**
+     * Redraws the polygon and the temporary preview lines.
+     * The canvas is cleared before each rendering to prevent drawing trails.
+     */
     private void render() {
         canvas.clear();
         polygonRasterizer.rasterize(polygon);
-        if (previewLine != null){
+        if (previewLine != null) {
             rasterizer.rasterize(previewLine);
-            if (!points.isEmpty()){
+            if (!points.isEmpty()) {
                 Point firstPoint = points.getFirst();
                 currentPoint = previewLine.getPoint2();
                 rasterizer.rasterize(new Line(PREVIEW_COLOR, firstPoint, currentPoint));
@@ -125,15 +129,15 @@ public class Controller {
         canvas.repaint();
 
     }
+
     private void startLine(MouseEvent e) {
-        if (polygon.isFinished()){
+        if (polygon.isFinished()) {
             return;
         }
         currentPoint = getPoint(e);
-        if (!polygon.getPoints().isEmpty()){
+        if (!polygon.getPoints().isEmpty()) {
             startPoint = polygon.getPoints().getLast();
-        }
-        else {
+        } else {
             startPoint = currentPoint;
             points.add(startPoint);
         }
@@ -141,7 +145,7 @@ public class Controller {
         render();
     }
 
-    private void finishPolygon(KeyEvent e) {
+    private void finishPolygon() {
         if (polygon.getPoints().size() > 2) {
             polygon.setFinished(true);
         }

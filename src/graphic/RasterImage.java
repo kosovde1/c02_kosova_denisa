@@ -3,12 +3,16 @@ package graphic;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Implements a raster image using a BufferedImage.
+ * Provides methods for pixel manipulation and clearing the image.
+ */
 public class RasterImage implements Raster {
 
     private final BufferedImage image;
 
-    public RasterImage (int width, int height) {
-        this.image = new BufferedImage (width, height, BufferedImage.TYPE_INT_RGB);
+    public RasterImage(int width, int height) {
+        this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
 
     @Override
@@ -38,6 +42,7 @@ public class RasterImage implements Raster {
 
     @Override
     public void setPixel(int x, int y, int color) {
+        // Ignore pixels outside the raster.
         if (x >= 0 && x < image.getWidth() && y >= 0 && y < image.getHeight()) {
             image.setRGB(x, y, color);
         }

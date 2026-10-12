@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Represents a line defined by two endpoints and a color.
+ */
 public class Line {
     private final int color;
     private final Point point1;
